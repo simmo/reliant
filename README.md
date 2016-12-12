@@ -1,5 +1,5 @@
 # Reliant
-Checks the system has required dependancies installed.
+Checks the system has required dependencies installed.
 
 ## Install
 
@@ -53,4 +53,4 @@ Example:
         }
     ...
 
-With the above example you should be able to run `npm test` from your terminal.
+With the above example, you should be able to run `npm test` from your terminal.
