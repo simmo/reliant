@@ -1,6 +1,6 @@
 {
   "name": "reliant",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Checks the system has required dependancies installed.",
   "main": "index.js",
   "repository": "https://github.com/simmo/reliant",
