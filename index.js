@@ -12,28 +12,43 @@ const failSymbol     = isWindows ? 'x' : '\u2717'
 
 module.exports = function reliant(options) {
     // Default reporter - console logs results
-    function defaultReporter(results) {
+    function defaultReporter(results, error = false) {
         const pluralise = (count, singular, plural) => `${count} ${count === 1 ? singular : plural}`
 
-        // Build summary
-        const summary = results
-            .map(result => result.pass ? chalk.green(`${passSymbol} ${chalk.bold(result.name)}`) : chalk.red(`${failSymbol} ${chalk.bold(result.name)}`))
+        // Output title
+        console.log('Reliant\n=======\n')
 
-        // Build issues
-        const issues = results
-            .filter(result => !result.pass)
-            .map(result => `+ ${chalk.bold(result.name)} requires ${chalk.bold(result.version.required)} but found ${chalk.bold.red(result.version.found)}`)
-
-        // Output report
-        console.log('Environment check\n=================\n')
-        console.log(`Summary:\n${summary.join('\n')}`)
-        console.log(`\n${pluralise(results.length, 'test', 'tests')}, ${pluralise(results.length - issues.length, 'pass', 'passes')}, ${pluralise(issues.length, 'failure', 'failures')}\n`)
-
-        // Got issues?
-        if (issues.length) {
-            console.log(`Issues:\n${issues.join('\n')}\n`)
+        // Check if results is an error
+        if (error) {
+            // Just display error
+            console.log('Sorry, something went wrong...\n')
+            console.log(chalk.red(`${results}\n`))
         } else {
-            console.log('Horay! No issues!\n')
+            // Build summary
+            const summary = results
+                .map(result => result.pass ? chalk.green(`${passSymbol} ${chalk.bold(result.name)}`) : chalk.red(`${failSymbol} ${chalk.bold(result.name)}`))
+
+            // Build issues
+            const issues = results
+                .filter(result => !result.pass)
+                .map(result => {
+                    if (result.error) {
+                        return `+ ${chalk.bold(result.name)} requires ${chalk.bold(result.version.required)} but errored with ${chalk.bold.red(result.error)}`
+                    } else {
+                        return `+ ${chalk.bold(result.name)} requires ${chalk.bold(result.version.required)} but found ${chalk.bold.red(result.version.found)}`
+                    }
+                })
+
+            // Output report
+            console.log(`Summary:\n${summary.join('\n')}`)
+            console.log(`\n${pluralise(results.length, 'test', 'tests')}, ${pluralise(results.length - issues.length, 'pass', 'passes')}, ${pluralise(issues.length, 'failure', 'failures')}\n`)
+
+            // Got issues?
+            if (issues.length) {
+                console.log(`Issues:\n${issues.join('\n')}\n`)
+            } else {
+                console.log('Horay! No issues!\n')
+            }
         }
     }
 
@@ -41,14 +56,9 @@ module.exports = function reliant(options) {
     function run(rules) {
         // Create an array of Promises
         const tests = rules.map(rule => {
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
                 // Execute command
-                exec(rule.cmd, (error, stdout, stderr) => {
-                    // If the command didn't run, throw error
-                    if (error !== null) {
-                        reject(`${rule.name} test failed: ${error} ${stderr}`)
-                    }
-
+                exec(rule.cmd, (error = null, stdout, stderr) => {
                     // Resolve the Promise and return a details object
                     resolve({
                         name: rule.name,
@@ -57,6 +67,7 @@ module.exports = function reliant(options) {
                             required: rule.version,
                             found: stdout.replace(/\r?\n|\r/g, '')
                         },
+                        error: error !== null ? stderr.replace(/\r?\n|\r$/, '') : null,
                         pass: semver.satisfies(stdout, rule.version)
                     })
                 })
@@ -86,7 +97,7 @@ module.exports = function reliant(options) {
         // Run
         run(rules)
             .then(results => {
-                options.reporter(results)
+                options.reporter(results, false)
 
                 // If we have any fails, exit with
                 if (results.filter(result => !result.pass).length > 0) {
@@ -96,6 +107,8 @@ module.exports = function reliant(options) {
                     // Success
                     process.exit()
                 }
+            }).catch(error => {
+                options.reporter(error, true)
             })
     })
 }
