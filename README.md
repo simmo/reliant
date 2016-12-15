@@ -39,17 +39,13 @@ Each object within the array should define the following:
 
 ## Run
 
-Save the following to `env-check.js`
-
-    require('reliant')()
-
-In your package.json add `node env-check.js` to the `scripts` block.
+In your package.json add `reliant` to the `scripts` block.
 
 Example:
 
     ...
         "scripts": {
-            "test": "node env-check.js"
+            "test": "reliant"
         }
     ...
 
