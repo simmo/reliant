@@ -13,21 +13,23 @@ This should be valid JSON.
 
 For example:
 
-    [
-        {
-            "name": "NPM",
-            "cmd": "npm --version",
-            "version": "3.0.0 - 4.0.x"
-        }, {
-            "name": "Node",
-            "cmd": "node --version",
-            "version": "^4.0.0"
-        }, {
-            "name": "Yarn",
-            "cmd": "yarn --version",
-            "version": "0.17.x"
-        }
-    ]
+```json
+[
+    {
+        "name": "NPM",
+        "cmd": "npm --version",
+        "version": "3.0.0 - 4.0.x"
+    }, {
+        "name": "Node",
+        "cmd": "node --version",
+        "version": "^4.0.0"
+    }, {
+        "name": "Yarn",
+        "cmd": "yarn --version",
+        "version": "0.17.x"
+    }
+]
+```
 
 Each object within the array should define the following:
 
@@ -43,10 +45,12 @@ In your package.json add `reliant` to the `scripts` block.
 
 Example:
 
-    ...
-        "scripts": {
-            "test": "reliant"
-        }
-    ...
+```json
+...
+    "scripts": {
+        "test": "reliant"
+    }
+...
+```
 
 With the above example, you should be able to run `npm test` from your terminal.
