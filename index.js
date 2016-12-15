@@ -47,7 +47,7 @@ module.exports = function reliant(options) {
             if (issues.length) {
                 console.log(`Issues:\n${issues.join('\n')}\n`)
             } else {
-                console.log('Horay! No issues!\n')
+                console.log('No issues!\n')
             }
         }
     }
