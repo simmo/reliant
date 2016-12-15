@@ -12,7 +12,7 @@ const failSymbol     = isWindows ? 'x' : '\u2717'
 
 module.exports = function reliant(options) {
     // Default reporter - console logs results
-    function defaultReporter(results, error = false) {
+    function defaultReporter(results, error) {
         const pluralise = (count, singular, plural) => `${count} ${count === 1 ? singular : plural}`
 
         // Output title
@@ -58,7 +58,7 @@ module.exports = function reliant(options) {
         const tests = rules.map(rule => {
             return new Promise(resolve => {
                 // Execute command
-                exec(rule.cmd, (error = null, stdout, stderr) => {
+                exec(rule.cmd, (error, stdout, stderr) => {
                     // Resolve the Promise and return a details object
                     resolve({
                         name: rule.name,
