@@ -1,4 +1,7 @@
 # Reliant
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/simmo/reliant.svg)](https://greenkeeper.io/)
+
 Checks the system has required dependencies installed.
 
 ## Install
